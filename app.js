@@ -3,7 +3,6 @@ const fs = require('fs');
 const firebase = require("firebase");
 require("firebase/firestore");
 
-// Initialize Cloud Firestore through Firebase
 firebase.initializeApp({
     apiKey: "AIzaSyDkAmpGb1THWbDSQVMiofPh15-teOj_IO8",
     authDomain: "terminally-ill-8bae6.firebaseapp.com",
@@ -32,8 +31,6 @@ const user = {
     username: '',
 }
 
-
-
 const login = () => {
     term.bgBlack('enter a username \n');
 
@@ -46,14 +43,13 @@ const login = () => {
         }
         user.username = input;
         term.green(`\n Your name is ${user.username} \n`);
-        // printMessages();
         listenForMessages();
         chatBox();
     });
 }
 
 const chatBox = () => {
-    // term.bgBlack('message ->');
+    term.green(`> `);
     term.inputField({}, (err, input) => {
         if (input === 'Q') {
             process.exit();
@@ -76,7 +72,6 @@ const chatBox = () => {
             });
         }
         term('\n');
-        // printMessages();
         chatBox();
     });
 
@@ -84,28 +79,21 @@ const chatBox = () => {
 
 term('\n');
 
-const printLastMessage = async () => {
 
-}
 
-const printMessages = async () => {
-    const messages = await db.collection("messages").get();
-    messages.forEach(msg => {
-        const msgData = msg.data();
-        term.red(`${msgData.user} : `);
-        term(`${msgData.message} \n`);
-    });
-}
+
 
 const listenForMessages = () => {
     db.collection('messages').orderBy('created', 'desc').limit(20)
     .onSnapshot(function(snapshot) {
+        term.clear();
         const messages = []; 
         snapshot.forEach(doc => messages.push(doc.data()))
         messages.reverse().forEach(msg => {
             term.red(`${msg.user}: `);
             term(`${msg.message} \n`);
         })
+        term.green(`> `);
     });
 };
 
